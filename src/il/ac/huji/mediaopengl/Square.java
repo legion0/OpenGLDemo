@@ -3,6 +3,7 @@ package il.ac.huji.mediaopengl;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -29,6 +30,8 @@ class Square {
 	private final FloatBuffer vertexBuffer;
 	private final int mProgram;
 
+	private float[] speed = new float[] { (float) (Math.random() * 0.01), (float) (Math.random() * 0.01), 0.0f };
+
 	static int vertexShader = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, MyGLRenderer.vertexShaderCode);
 	static int fragmentShader = MyGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER, MyGLRenderer.fragmentShaderCode);
 
@@ -50,6 +53,8 @@ class Square {
 	}
 
 	public void draw(GL10 unused) {
+
+		move();
 
 		// set the shape coords
 		vertexBuffer.position(0);
@@ -79,6 +84,25 @@ class Square {
 
 		// Disable vertex array
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
+	}
+
+	private void move() {
+		float[] newSpeed = Arrays.copyOf(speed, speed.length);
+		for (int i = 0; i < squareCoords.length; i += 3) {
+			for (int j = 0; j < 3; j++) {
+				squareCoords[i + j] += speed[j];
+				if (squareCoords[i + j] > 1) {
+					if (newSpeed[j] == speed[j]) {
+						newSpeed[j] *= -1;
+					}
+				} else if (squareCoords[i + j] < -1) {
+					if (newSpeed[j] == speed[j]) {
+						newSpeed[j] *= -1;
+					}
+				}
+			}
+		}
+		speed = newSpeed;
 	}
 	
 	public static int loadProgram() {
