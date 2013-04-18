@@ -2,6 +2,7 @@ package il.ac.huji.mediaopengl;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.app.Activity;
 import android.content.Context;
 
@@ -54,5 +55,28 @@ class MyGLSurfaceView extends GLSurfaceView {
 
 		// Render the view only when there is a change in the drawing data
 //		setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		// MotionEvent reports input details from the touch screen
+		// and other input controls. In this case, you are only
+		// interested in events where the touch position changed.
+
+		float x = e.getX();
+		float y = e.getY();
+
+		switch (e.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			renderer.setGravity(x, y, 0);
+			break;
+		case MotionEvent.ACTION_MOVE:
+			renderer.setGravity(x, y, 0);
+			break;
+		case MotionEvent.ACTION_UP:
+			renderer.cancelGravity();
+		}
+
+		return true;
 	}
 }

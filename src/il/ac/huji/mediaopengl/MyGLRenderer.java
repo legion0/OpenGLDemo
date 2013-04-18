@@ -9,6 +9,8 @@ import android.opengl.GLSurfaceView;
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 	private Square square;
+	private int width;
+	private int height;
 
     public static final String vertexShaderCode =
         "attribute vec4 vPosition;" +
@@ -41,6 +43,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 unused, int width, int height) {
+		this.width = width;
+		this.height = height;
 		GLES20.glViewport(0, 0, width, height);
 	}
 
@@ -57,4 +61,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 		return shader;
 	}
 
+	public void setGravity(float x, float y, float z) {
+		square.setTarget(new float[] { x / this.width * 2 - 1, (y / this.height * 2 - 1) * -1, z });
+	}
+
+	public void cancelGravity() {
+		square.setTarget(null);
+	}
 }

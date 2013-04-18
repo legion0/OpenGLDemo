@@ -30,6 +30,7 @@ class Square {
 	private final FloatBuffer vertexBuffer;
 	private final int mProgram;
 
+	private float[] target = null;
 	private float[] speed = new float[] { (float) (Math.random() * 0.01), (float) (Math.random() * 0.01), 0.0f };
 
 	static int vertexShader = MyGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER, MyGLRenderer.vertexShaderCode);
@@ -87,6 +88,7 @@ class Square {
 	}
 
 	private void move() {
+		accelerate();
 		float[] newSpeed = Arrays.copyOf(speed, speed.length);
 		for (int i = 0; i < squareCoords.length; i += 3) {
 			for (int j = 0; j < 3; j++) {
@@ -103,6 +105,38 @@ class Square {
 			}
 		}
 		speed = newSpeed;
+	}
+
+	private void accelerate() {
+		float[] target = getTarget();
+		if (target == null) {
+			return;
+		}
+		float[] center = new float[] {
+			(squareCoords[0] + squareCoords[3] + squareCoords[6] + squareCoords[9] ) / 4,
+			(squareCoords[1] + squareCoords[4] + squareCoords[7] + squareCoords[10]) / 4,
+			(squareCoords[2] + squareCoords[5] + squareCoords[8] + squareCoords[11]) / 4
+		};
+		float factor = 0.0005f;
+		float[] acceleration = new float[] {
+			factor * (target[0] - center[0]),
+			factor * (target[1] - center[1]),
+			factor * (target[2] - center[2])
+		};
+		for (int i = 0; i < speed.length; i++) {
+			speed[i] += acceleration[i];
+		}
+	}
+
+	public synchronized void setTarget(float[] acc) {
+		target = acc;
+	}
+
+	private synchronized float[] getTarget() {
+		if (target == null) {
+			return null;
+		}
+		return Arrays.copyOf(target, target.length);
 	}
 	
 	public static int loadProgram() {
