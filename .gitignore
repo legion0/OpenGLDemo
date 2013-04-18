@@ -1,0 +1,5 @@
+/bin/
+/gen/
+# dont need these in a school project
+/.gitconfigs/
+
